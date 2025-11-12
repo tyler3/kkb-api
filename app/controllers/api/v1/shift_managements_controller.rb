@@ -6,7 +6,7 @@ module Api
       def index
         shift_managements = ShiftManagement.all
         shift_managements = shift_managements.where(updated_by_id: params[:userId]) if params[:userId].present?
-        shift_managements = shift_managements.order(created_at: :desc).limit(1)
+        shift_managements = shift_managements.order(created_at: :desc).limit(50)
         result = shift_managements.map do |shift_management|
           file = shift_management.files.first
           {
