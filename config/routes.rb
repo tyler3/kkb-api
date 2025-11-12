@@ -15,6 +15,8 @@ Rails.application.routes.draw do
       }
 
       resources :users, only: [:index]
+      resources :shift_categories, only: [:index]
+      resources :shift_managements, only: [:index, :create]
       post 'kkbs/create_instruction', to: 'kkbs#create_instruction'
     end
   end

@@ -9,4 +9,5 @@ class ShiftManagement < ApplicationRecord
   enum :table_type, {table_a: 0, table_b: 1, table_c: 2, table_d: 3, table_e: 4}
   has_many :shift_management_members, dependent: :destroy
   has_many :shift_management_groups, dependent: :destroy
+  has_many_attached :files
 end
