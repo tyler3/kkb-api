@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_05_050213) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_14_015338) do
   create_table "accident_reports", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", options: "ENGINE=InnoDB ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.integer "user_id"
     t.integer "department_id"
@@ -574,67 +574,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_05_050213) do
   end
 
   create_table "capture_categories", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "category_no", null: false
-    t.string "category_name", null: false
-    t.integer "payment_term_months"
-    t.boolean "active_flg", default: true, null: false
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.integer "pattern_master_id"
-    t.string "supplier_number"
-    t.integer "supplier_company_no"
-    t.integer "debit_account_id"
-    t.integer "credit_account_id"
-    t.integer "debit_sub_account_id"
-    t.integer "credit_sub_account_id"
-    t.integer "debit_department_id"
-    t.integer "credit_department_id"
-    t.string "tax_class_no", limit: 10
-    t.decimal "tax_rate", precision: 5, scale: 2
-    t.index ["category_no"], name: "index_capture_categories_on_category_no", unique: true
-    t.index ["credit_account_id"], name: "index_capture_categories_on_credit_account_id"
-    t.index ["credit_department_id"], name: "index_capture_categories_on_credit_department_id"
-    t.index ["credit_sub_account_id"], name: "index_capture_categories_on_credit_sub_account_id"
-    t.index ["debit_account_id"], name: "index_capture_categories_on_debit_account_id"
-    t.index ["debit_department_id"], name: "index_capture_categories_on_debit_department_id"
-    t.index ["debit_sub_account_id"], name: "index_capture_categories_on_debit_sub_account_id"
-    t.index ["pattern_master_id"], name: "index_capture_categories_on_pattern_master_id"
-  end
-
-  create_table "capture_data", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "capture_history_id", null: false
-    t.integer "row_no", null: false
-    t.integer "department_id", null: false
-    t.integer "business_connection_id"
-    t.integer "accounting_item_id"
-    t.bigint "amount", null: false
-    t.bigint "second_amount"
-    t.decimal "tax_rate", precision: 5, scale: 2
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.index ["accounting_item_id"], name: "index_capture_data_on_accounting_item_id"
-    t.index ["business_connection_id"], name: "index_capture_data_on_business_connection_id"
-    t.index ["capture_history_id"], name: "index_capture_data_on_capture_history_id"
-    t.index ["department_id"], name: "index_capture_data_on_department_id"
-  end
-
-  create_table "capture_histories", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "capture_category_id", null: false
-    t.date "capture_date", null: false
-    t.string "accrual_month", limit: 7
-    t.string "payment_month", limit: 7, null: false
-    t.string "file_name", null: false
-    t.integer "record_count", default: 0
-    t.bigint "total_amount", default: 0
-    t.string "status", null: false
-    t.boolean "locked_flg", default: false, null: false
-    t.text "error_message"
+    t.string "name", null: false
+    t.string "business_connection_code"
+    t.string "business_connection_company_code"
+    t.string "debit_department_code"
+    t.integer "debit_account_code"
+    t.integer "debit_account_sub_code"
+    t.string "credit_department_code"
+    t.integer "credit_account_code"
+    t.integer "credit_account_sub_code"
+    t.string "abstract"
+    t.string "supplier_abstract"
+    t.integer "journal_entry_pattern_group_no", null: false
+    t.integer "payment_terms"
+    t.boolean "delete_flg", default: false, null: false
     t.integer "created_by_id", null: false
+    t.integer "updated_by_id", null: false
+    t.integer "tax_class_code", limit: 1
+    t.integer "tax_rate_code", limit: 1
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.date "fund_transfer_date"
-    t.index ["capture_category_id"], name: "index_capture_histories_on_capture_category_id"
-    t.index ["created_by_id"], name: "index_capture_histories_on_created_by_id"
+    t.index ["created_by_id"], name: "index_capture_categories_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_capture_categories_on_updated_by_id"
   end
 
   create_table "cash_counts", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -2433,84 +2394,42 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_05_050213) do
     t.index ["updated_by_id"], name: "index_invoice_headers_on_updated_by_id"
   end
 
-  create_table "journal_entries", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "capture_history_id", null: false
-    t.date "journal_date", null: false
-    t.integer "stage_no"
-    t.integer "debit_department_id"
-    t.integer "debit_account_id", null: false
-    t.bigint "debit_amount", null: false
-    t.integer "credit_department_id"
-    t.integer "credit_account_id", null: false
-    t.bigint "credit_amount", null: false
-    t.string "abstract"
-    t.integer "business_connection_id"
-    t.boolean "exported_flg", default: false, null: false
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.integer "debit_business_connection_id"
-    t.integer "credit_business_connection_id"
-    t.index ["business_connection_id"], name: "index_journal_entries_on_business_connection_id"
-    t.index ["capture_history_id"], name: "index_journal_entries_on_capture_history_id"
-    t.index ["credit_account_id"], name: "index_journal_entries_on_credit_account_id"
-    t.index ["credit_business_connection_id"], name: "index_journal_entries_on_credit_business_connection_id"
-    t.index ["credit_department_id"], name: "index_journal_entries_on_credit_department_id"
-    t.index ["debit_account_id"], name: "index_journal_entries_on_debit_account_id"
-    t.index ["debit_business_connection_id"], name: "index_journal_entries_on_debit_business_connection_id"
-    t.index ["debit_department_id"], name: "index_journal_entries_on_debit_department_id"
-  end
-
   create_table "journal_entry_patterns", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "pattern_master_id", null: false
-    t.string "journal_entry_pattern_name", limit: 100, null: false
+    t.integer "group_no", null: false
+    t.string "name", null: false
     t.integer "row_no", null: false
-    t.integer "date_pattern_no"
-    t.integer "company_id"
-    t.integer "debit_department_id"
-    t.integer "debit_account_id"
-    t.integer "debit_sub_account_id"
-    t.integer "debit_supplier_id"
-    t.decimal "debit_tax_rate", precision: 5, scale: 2
-    t.string "debit_tax_class", limit: 10
-    t.integer "credit_department_id"
-    t.integer "credit_account_id"
-    t.integer "credit_sub_account_id"
-    t.integer "credit_supplier_id"
-    t.decimal "credit_tax_rate", precision: 5, scale: 2
-    t.string "credit_tax_class", limit: 10
-    t.text "abstract"
+    t.integer "date_pattern_no", null: false
+    t.string "company_code"
+    t.string "debit_department_code"
+    t.integer "debit_account_code"
+    t.integer "debit_account_sub_code"
+    t.string "debit_business_connection_code"
+    t.string "credit_department_code"
+    t.integer "credit_account_code"
+    t.integer "credit_account_sub_code"
+    t.string "credit_business_connection_code"
+    t.boolean "fixed_amount_flag", default: false, null: false
+    t.integer "fixed_amount"
+    t.boolean "filter_ratio_flag", default: false, null: false
+    t.integer "filter_ratio"
+    t.boolean "filter_amount_flag", default: false, null: false
+    t.integer "filter_amount"
+    t.integer "detail_division_no"
+    t.boolean "include_tax_flag", default: false, null: false
+    t.boolean "tax_calc_flag", default: false, null: false
+    t.boolean "accure_flag", default: false, null: false
     t.boolean "delete_flg", default: false, null: false
-    t.datetime "create_date", precision: nil, null: false
-    t.datetime "update_date", precision: nil
-    t.integer "create_user_id", null: false
-    t.integer "update_user_id"
+    t.string "abstract"
+    t.integer "debit_tax_class_code", limit: 1
+    t.integer "credit_tax_class_code", limit: 1
+    t.integer "debit_tax_rate_code", limit: 1
+    t.integer "credit_tax_rate_code", limit: 1
+    t.integer "created_by_id", null: false
+    t.integer "updated_by_id", null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.integer "debit_account_source", default: 0, null: false
-    t.integer "credit_account_source", default: 0, null: false
-    t.integer "debit_sub_account_source", default: 0, null: false
-    t.integer "credit_sub_account_source", default: 0, null: false
-    t.integer "debit_supplier_source"
-    t.integer "credit_supplier_source"
-    t.integer "debit_department_source", default: 0, null: false
-    t.integer "credit_department_source", default: 0, null: false
-    t.integer "company_source"
-    t.integer "debit_tax_class_source", default: 0, null: false
-    t.integer "credit_tax_class_source", default: 0, null: false
-    t.integer "debit_tax_rate_source"
-    t.integer "credit_tax_rate_source"
-    t.index ["company_id"], name: "index_journal_entry_patterns_on_company_id"
-    t.index ["create_user_id"], name: "index_journal_entry_patterns_on_create_user_id"
-    t.index ["credit_account_id"], name: "index_journal_entry_patterns_on_credit_account_id"
-    t.index ["credit_department_id"], name: "index_journal_entry_patterns_on_credit_department_id"
-    t.index ["credit_sub_account_id"], name: "index_journal_entry_patterns_on_credit_sub_account_id"
-    t.index ["credit_supplier_id"], name: "index_journal_entry_patterns_on_credit_supplier_id"
-    t.index ["debit_account_id"], name: "index_journal_entry_patterns_on_debit_account_id"
-    t.index ["debit_department_id"], name: "index_journal_entry_patterns_on_debit_department_id"
-    t.index ["debit_sub_account_id"], name: "index_journal_entry_patterns_on_debit_sub_account_id"
-    t.index ["debit_supplier_id"], name: "index_journal_entry_patterns_on_debit_supplier_id"
-    t.index ["pattern_master_id"], name: "index_journal_entry_patterns_on_pattern_master_id"
-    t.index ["update_user_id"], name: "index_journal_entry_patterns_on_update_user_id"
+    t.index ["created_by_id"], name: "index_journal_entry_patterns_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_journal_entry_patterns_on_updated_by_id"
   end
 
   create_table "journal_items", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", options: "ENGINE=InnoDB ROW_FORMAT=DYNAMIC", force: :cascade do |t|
@@ -6921,6 +6840,84 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_05_050213) do
     t.index ["user_id"], name: "index_time_sheets_on_user_id"
   end
 
+  create_table "trn_capture_histories", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "capture_category_id", null: false
+    t.date "accrual_month"
+    t.date "payment_month"
+    t.boolean "lock_flg", default: false, null: false
+    t.integer "created_by_id", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["capture_category_id"], name: "index_trn_capture_histories_on_capture_category_id"
+    t.index ["created_by_id"], name: "index_trn_capture_histories_on_created_by_id"
+  end
+
+  create_table "trn_capture_records", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "capture_history_id", null: false
+    t.integer "row_no", null: false
+    t.string "company_code", null: false
+    t.string "department_code", null: false
+    t.string "business_connection_code"
+    t.integer "account_code"
+    t.integer "account_sub_code"
+    t.integer "amount", null: false
+    t.integer "second_amount", null: false
+    t.string "list_cd"
+    t.integer "tax_class_code", limit: 1
+    t.integer "tax_rate_code", limit: 1
+    t.integer "created_by_id", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["capture_history_id"], name: "index_trn_capture_records_on_capture_history_id"
+    t.index ["created_by_id"], name: "index_trn_capture_records_on_created_by_id"
+  end
+
+  create_table "trn_journal_entry_histories", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "capture_history_id", null: false
+    t.integer "capture_category_id", null: false
+    t.date "accrual_month"
+    t.date "payment_month", null: false
+    t.boolean "execute_flag", default: false, null: false
+    t.integer "created_by_id", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["capture_category_id"], name: "index_trn_journal_entry_histories_on_capture_category_id"
+    t.index ["capture_history_id"], name: "index_trn_journal_entry_histories_on_capture_history_id"
+    t.index ["created_by_id"], name: "index_trn_journal_entry_histories_on_created_by_id"
+  end
+
+  create_table "trn_journal_entry_records", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "journal_entry_history_id", null: false
+    t.integer "excel_row_no", null: false
+    t.integer "row_no", null: false
+    t.date "date", null: false
+    t.string "company_code", null: false
+    t.string "department_code"
+    t.string "debit_department_code"
+    t.integer "debit_account_code"
+    t.integer "debit_account_sub_code"
+    t.integer "debit_amount"
+    t.string "debit_business_connection_code"
+    t.string "credit_department_code"
+    t.integer "credit_account_code"
+    t.integer "credit_account_sub_code"
+    t.integer "credit_amount"
+    t.string "credit_business_connection_code"
+    t.string "abstract"
+    t.integer "debit_tax_class_code", limit: 1
+    t.integer "credit_tax_class_code", limit: 1
+    t.integer "debit_tax_rate_code", limit: 1
+    t.integer "credit_tax_rate_code", limit: 1
+    t.integer "created_by_id", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["created_by_id"], name: "index_trn_journal_entry_records_on_created_by_id"
+    t.index ["credit_department_code"], name: "index_trn_journal_entry_records_on_credit_department_code"
+    t.index ["debit_department_code"], name: "index_trn_journal_entry_records_on_debit_department_code"
+    t.index ["department_code"], name: "index_trn_journal_entry_records_on_department_code"
+    t.index ["journal_entry_history_id"], name: "index_trn_journal_entry_records_on_journal_entry_history_id"
+  end
+
   create_table "uniform_numbers", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", options: "ENGINE=InnoDB ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.string "class_lg", null: false
     t.string "class_md"
@@ -6985,8 +6982,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_05_050213) do
     t.text "official_document"
     t.integer "kkb_board_number"
     t.text "progress"
+    t.integer "created_by_id"
+    t.integer "updated_by_id"
+    t.index ["created_by_id"], name: "index_unit_tasks_on_created_by_id"
     t.index ["from_organization_unit_id"], name: "index_unit_tasks_on_from_organization_unit_id"
     t.index ["to_organization_unit_id"], name: "index_unit_tasks_on_to_organization_unit_id"
+    t.index ["updated_by_id"], name: "index_unit_tasks_on_updated_by_id"
   end
 
   create_table "unknown_bank_branches", id: :integer, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -7534,19 +7535,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_05_050213) do
   add_foreign_key "calendar_dest_designs", "users", column: "updated_by_id"
   add_foreign_key "calendar_dests", "users", column: "created_by_id"
   add_foreign_key "calendar_dests", "users", column: "updated_by_id"
-  add_foreign_key "capture_categories", "accounting_items", column: "credit_account_id"
-  add_foreign_key "capture_categories", "accounting_items", column: "credit_sub_account_id"
-  add_foreign_key "capture_categories", "accounting_items", column: "debit_account_id"
-  add_foreign_key "capture_categories", "accounting_items", column: "debit_sub_account_id"
-  add_foreign_key "capture_categories", "departments", column: "credit_department_id"
-  add_foreign_key "capture_categories", "departments", column: "debit_department_id"
-  add_foreign_key "capture_categories", "pattern_masters"
-  add_foreign_key "capture_data", "accounting_items"
-  add_foreign_key "capture_data", "business_connections"
-  add_foreign_key "capture_data", "capture_histories"
-  add_foreign_key "capture_data", "departments"
-  add_foreign_key "capture_histories", "capture_categories"
-  add_foreign_key "capture_histories", "users", column: "created_by_id"
+  add_foreign_key "capture_categories", "users", column: "created_by_id"
+  add_foreign_key "capture_categories", "users", column: "updated_by_id"
   add_foreign_key "cash_counts", "departments"
   add_foreign_key "cash_reserves", "daily_journal_items"
   add_foreign_key "cash_reserves", "departments"
@@ -7765,26 +7755,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_05_050213) do
   add_foreign_key "invoice_headers", "companies"
   add_foreign_key "invoice_headers", "users", column: "created_by_id"
   add_foreign_key "invoice_headers", "users", column: "updated_by_id"
-  add_foreign_key "journal_entries", "accounting_items", column: "credit_account_id"
-  add_foreign_key "journal_entries", "accounting_items", column: "debit_account_id"
-  add_foreign_key "journal_entries", "business_connections"
-  add_foreign_key "journal_entries", "business_connections", column: "credit_business_connection_id"
-  add_foreign_key "journal_entries", "business_connections", column: "debit_business_connection_id"
-  add_foreign_key "journal_entries", "capture_histories"
-  add_foreign_key "journal_entries", "departments", column: "credit_department_id"
-  add_foreign_key "journal_entries", "departments", column: "debit_department_id"
-  add_foreign_key "journal_entry_patterns", "accounting_items", column: "credit_account_id"
-  add_foreign_key "journal_entry_patterns", "accounting_items", column: "credit_sub_account_id"
-  add_foreign_key "journal_entry_patterns", "accounting_items", column: "debit_account_id"
-  add_foreign_key "journal_entry_patterns", "accounting_items", column: "debit_sub_account_id"
-  add_foreign_key "journal_entry_patterns", "business_connections", column: "credit_supplier_id"
-  add_foreign_key "journal_entry_patterns", "business_connections", column: "debit_supplier_id"
-  add_foreign_key "journal_entry_patterns", "companies"
-  add_foreign_key "journal_entry_patterns", "departments", column: "credit_department_id"
-  add_foreign_key "journal_entry_patterns", "departments", column: "debit_department_id"
-  add_foreign_key "journal_entry_patterns", "pattern_masters"
-  add_foreign_key "journal_entry_patterns", "users", column: "create_user_id"
-  add_foreign_key "journal_entry_patterns", "users", column: "update_user_id"
+  add_foreign_key "journal_entry_patterns", "users", column: "created_by_id"
+  add_foreign_key "journal_entry_patterns", "users", column: "updated_by_id"
   add_foreign_key "journal_items", "users"
   add_foreign_key "kkb_categories", "users"
   add_foreign_key "kkb_category_groups", "groups"
@@ -8396,6 +8368,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_05_050213) do
   add_foreign_key "time_sheets", "departments", column: "department5_id"
   add_foreign_key "time_sheets", "users"
   add_foreign_key "time_sheets", "users", column: "edit_user_id"
+  add_foreign_key "trn_capture_histories", "users", column: "created_by_id"
+  add_foreign_key "trn_capture_records", "users", column: "created_by_id"
+  add_foreign_key "trn_journal_entry_histories", "users", column: "created_by_id"
+  add_foreign_key "trn_journal_entry_records", "users", column: "created_by_id"
   add_foreign_key "uniform_numbers", "users", column: "created_by_id"
   add_foreign_key "uniform_numbers", "users", column: "updated_by_id"
   add_foreign_key "unit_daily_reports", "kkbs"
@@ -8407,6 +8383,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_05_050213) do
   add_foreign_key "unit_report_items", "users", column: "updated_by_id"
   add_foreign_key "unit_tasks", "organization_units", column: "from_organization_unit_id"
   add_foreign_key "unit_tasks", "organization_units", column: "to_organization_unit_id"
+  add_foreign_key "unit_tasks", "users", column: "created_by_id"
+  add_foreign_key "unit_tasks", "users", column: "updated_by_id"
   add_foreign_key "user_additions", "users"
   add_foreign_key "user_areas_regions", "areas"
   add_foreign_key "user_areas_regions", "regions"
