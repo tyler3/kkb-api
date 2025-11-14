@@ -32,7 +32,7 @@ class OrganizationUnit < ApplicationRecord
     
   def hierarchical_children(excepted_id=nil)
     units = []
-    children.where.not(id: excepted_id).order(:sort_order).each do |child|
+    children.where(hidden: false).where.not(id: excepted_id).order(:sort_order).each do |child|
       units.push(child)
       units += child.hierarchical_children(excepted_id)
     end
@@ -42,7 +42,7 @@ class OrganizationUnit < ApplicationRecord
   # 階層化された順に取得
   def self.hierarchical_all(excepted_id=nil)
     units = []
-    OrganizationUnit.where(parent_id: nil).where.not(id: excepted_id).order(:sort_order).each do |child|
+    OrganizationUnit.where(hidden: false, parent_id: nil).where.not(id: excepted_id).order(:sort_order).each do |child|
       units.push(child)
       units += child.hierarchical_children(excepted_id)
     end
