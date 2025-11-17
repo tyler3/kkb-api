@@ -17,6 +17,7 @@ module Api
             orgName: unit_task.to_organization_unit&.name,
             taskName: unit_task.task_name,
             content: unit_task.content,
+            fileAttached: !!file&.attached?,
             fileUrl: file&.attached? ? Rails.application.routes.url_helpers.rails_blob_path(unit_task.movie_file, only_path: true, disposition: :inline) : ""
           }
         end
@@ -37,7 +38,14 @@ module Api
         if params[:file].present?
           unit_task.movie_file.attach(params[:file])
         end
-        render json: { status: "success", data: { id: unit_task.id } }, status: :ok
+        render json: { data: { id: unit_task.id } }, status: :ok
+      end
+
+      def movie_file_url
+        unit_task = UnitTask.find(params[:id])
+        file = unit_task.movie_file
+        url = file&.attached? ? file.url : ""
+        render json: { data: { url: url } }, status: :ok
       end
     end
   end

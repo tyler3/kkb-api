@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       resources :shift_managements, only: [:index, :create]
       resources :organization_units, only: [:index]
       resources :unit_tasks, only: [:index, :create]
+      get 'unit_tasks/movie_file_url'
       post 'kkbs/create_instruction', to: 'kkbs#create_instruction'
     end
   end
