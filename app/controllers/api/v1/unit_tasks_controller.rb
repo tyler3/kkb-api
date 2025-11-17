@@ -11,7 +11,9 @@ module Api
           file = unit_task.movie_file
           {
             id: unit_task.id,
+            code: unit_task.code,
             day: unit_task.occurrence_date&.strftime("%Y-%m-%d"),
+            createdAt: unit_task.created_at&.strftime("%Y-%m-%d %H:%M:%S"),
             orgName: unit_task.to_organization_unit&.name,
             taskName: unit_task.task_name,
             content: unit_task.content,
