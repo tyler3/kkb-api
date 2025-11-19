@@ -4,7 +4,7 @@ module Api
       before_action :authenticate_api_v1_user!
 
       def index
-        organization_units = OrganizationUnit.hierarchical_all
+        organization_units = OrganizationUnit.visible.order(:sort_order)
         result = organization_units.map { |unit| { id: unit.id, name: unit.name_with_code } }
         render json: result.to_json
       end
