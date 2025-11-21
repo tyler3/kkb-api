@@ -37,24 +37,23 @@ class UnitTask < ApplicationRecord
 
   def generate_unique_code
     return if code.present? # 既にcodeが設定されている場合はスキップ（CSV等で指定されたcodeを保持）
-    return unless to_organization_unit # ガード節を追加
 
-    organization_unit = to_organization_unit
-    count = organization_unit.task_count + 1
-    self.code = "#{organization_unit.symbol}#{count}"
+    # 408, 409, 410, 411... という単純な連番で採番
+    # 既存の最大コード番号を取得（数値として比較）
+    max_code = UnitTask.where("code REGEXP '^[0-9]+$'").maximum("CAST(code AS UNSIGNED)")
 
-    # タスクカウントを更新
-    organization_unit.update(task_count: count)
+    if max_code.nil? || max_code == 0
+      # データが存在しない場合は408から開始
+      self.code = "408"
+    else
+      # 最大値 + 1
+      self.code = (max_code + 1).to_s
+    end
   end
 
   def update_task_code_prefix
-    return unless to_organization_unit
-    return unless code.present? # コードが存在する場合のみ更新
-
-    # 現在のコードから数値部分を抽出（末尾の数値）
-    current_number = code.match(/\d+$/)
-    return unless current_number # 数値部分がなければ何もしない
-
-    self.code = "#{to_organization_unit.symbol}#{current_number[0]}"
+    # 自動採番ロジック（408, 409, 410...）では、
+    # 組織変更時のコード更新は不要なため、このメソッドは無効化
+    return
   end
 end
